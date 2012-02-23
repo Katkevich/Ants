@@ -1,2 +1,2 @@
-Official site:
+Site:
 http://aichallenge.org/
