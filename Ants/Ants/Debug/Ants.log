@@ -1,0 +1,5 @@
+﻿  Bot.cpp
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(140): warning C4101: 'col' : unreferenced local variable
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(140): warning C4101: 'player' : unreferenced local variable
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(140): warning C4101: 'row' : unreferenced local variable
+  Ants.vcxproj -> C:\Users\ShturMan\documents\visual studio 2010\Projects\Ants\Ants\Debug\Ants.exe

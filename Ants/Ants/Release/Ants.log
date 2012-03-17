@@ -1,0 +1,6 @@
+﻿  Movement.cpp
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\Movement.h(11): warning C4091: 'static ' : ignored on left of 'Movement' when no variable is declared
+  Generating code
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\ant.cpp(160): warning C4715: 'Ant::MakeMove' : not all control paths return a value
+  Finished generating code
+  Ants.vcxproj -> C:\Users\ShturMan\documents\visual studio 2010\Projects\Ants\Ants\Release\Ants.exe
