@@ -1,6 +1,29 @@
-﻿  Movement.cpp
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\Movement.h(11): warning C4091: 'static ' : ignored on left of 'Movement' when no variable is declared
+﻿  Ant.cpp
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\Ant.h(37): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+  Ants.cpp
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\Ant.h(37): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+  Bot.cpp
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\Ant.h(37): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\Movement.h(34): warning C4091: 'static ' : ignored on left of 'Movement' when no variable is declared
+Bot.cpp(33): warning C4101: 'col' : unreferenced local variable
+Bot.cpp(33): warning C4101: 'player' : unreferenced local variable
+Bot.cpp(33): warning C4101: 'row' : unreferenced local variable
+Bot.cpp(166): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+Bot.cpp(182): warning C4553: '==' : operator has no effect; did you intend '='?
+Bot.cpp(160): warning C4101: 'u' : unreferenced local variable
+Bot.cpp(199): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+Bot.cpp(199): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+  Movement.cpp
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\Ant.h(37): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\Movement.h(34): warning C4091: 'static ' : ignored on left of 'Movement' when no variable is declared
+Movement.cpp(27): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+Movement.cpp(71): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+Movement.cpp(87): warning C4244: 'initializing' : conversion from 'const int' to 'float', possible loss of data
+Movement.cpp(88): warning C4244: 'initializing' : conversion from 'const int' to 'float', possible loss of data
+Movement.cpp(174): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+Movement.cpp(210): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
   Generating code
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\ant.cpp(160): warning C4715: 'Ant::MakeMove' : not all control paths return a value
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.cpp(250): warning C4715: 'Movement::GetDirection' : not all control paths return a value
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.cpp(82): warning C4715: 'Movement::SearchPathForAnt' : not all control paths return a value
   Finished generating code
   Ants.vcxproj -> C:\Users\ShturMan\documents\visual studio 2010\Projects\Ants\Ants\Release\Ants.exe

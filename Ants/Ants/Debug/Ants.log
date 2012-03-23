@@ -1,5 +1,12 @@
 ﻿  Bot.cpp
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(140): warning C4101: 'col' : unreferenced local variable
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(140): warning C4101: 'player' : unreferenced local variable
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(140): warning C4101: 'row' : unreferenced local variable
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\ant.h(37): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.h(45): warning C4091: 'static ' : ignored on left of 'Movement' when no variable is declared
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(143): warning C4101: 'col' : unreferenced local variable
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(143): warning C4101: 'player' : unreferenced local variable
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(143): warning C4101: 'row' : unreferenced local variable
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(348): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(364): warning C4553: '==' : operator has no effect; did you intend '='?
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(342): warning C4101: 'u' : unreferenced local variable
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(381): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(381): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
   Ants.vcxproj -> C:\Users\ShturMan\documents\visual studio 2010\Projects\Ants\Ants\Debug\Ants.exe

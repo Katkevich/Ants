@@ -7,7 +7,13 @@ enum Target: int
 	MY_HILL,
 	MY_ANTS,
 	ENEMY_ANTS,
-	EXPLORE
+	EXPLORE,
+	NOTHING
 };
 
 #define TARGET_RADIUS 2
+#define EXPLORE_RADIUS 20
+#define MAX_DIST_TO_FOOD 15
+#define DIST_TO_TARGET 15
+//#define SIZE_OF_EXP_PLACES 10
+#define RES_SQUARE 5
