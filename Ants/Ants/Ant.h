@@ -76,6 +76,7 @@ public:
 	Location location;
 	Location destination;
 	int distToTarget;
+	int turn;
 	char direction;
 	Target target;
 	bool onTheWay;

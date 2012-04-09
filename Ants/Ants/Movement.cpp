@@ -1,10 +1,10 @@
 #include "StdAfx.h"
 #include "Movement.h"
 
-int Movement::maxRows = 0;
-int Movement::maxCols = 0;
+int M::maxRows = 0;
+int M::maxCols = 0;
 
-char Movement::SearchPathForAnt(Ant* ant, Bot* bot)
+char M::SearchPathForAnt(Ant* ant, Bot* bot)
 {		
 //	ant->path->clear();	
 	vector<Cell> closedCells, openCells, neighborCells;
@@ -81,24 +81,24 @@ char Movement::SearchPathForAnt(Ant* ant, Bot* bot)
 	}
 }
 
-//float Movement::GetDirectDistance(int row1, int col1, int row2, int col2, int maxRows, int maxCols)
-float Movement::GetDirectDistance(int row1, int col1, int row2, int col2)
+//float M::GetDirectDistance(int row1, int col1, int row2, int col2, int maxRows, int maxCols)
+float M::GetDirectDistance(int row1, int col1, int row2, int col2)
 {	
 	float colDiff = min(col2 + (maxCols - col1), min(abs(col1 - col2), col1 + (maxCols - col2)));
 	float rowDiff = min(row2 + (maxRows - row1), min(abs(row1 - row2), row1 + (maxRows - row2)));
 	return sqrt(pow(colDiff, 2) + pow(rowDiff, 2));		 
 }
 
-//int Movement::GetDistance(int row1, int col1, int row2, int col2, int maxRows, int maxCols)
-int Movement::GetDistance(int row1, int col1, int row2, int col2)
+//int M::GetDistance(int row1, int col1, int row2, int col2, int maxRows, int maxCols)
+int M::GetDistance(int row1, int col1, int row2, int col2)
 {	
 	return 
 		min(row2 + (maxRows - row1), min(abs(row1 - row2), row1 + (maxRows - row2))) + 
 		min(col2 + (maxCols - col1), min(abs(col1 - col2), col1 + (maxCols - col2)));
 }
 
-//void Movement::GetNeighborCells(Cell* parent, int maxRows, int maxCols, vector<Cell>* neighborCells, vector<Location>* water)
-void Movement::GetNeighborCells(Cell* parent, vector<Cell>* neighborCells, vector<Location>* water)
+//void M::GetNeighborCells(Cell* parent, int maxRows, int maxCols, vector<Cell>* neighborCells, vector<Location>* water)
+void M::GetNeighborCells(Cell* parent, vector<Cell>* neighborCells, vector<Location>* water)
 {
 	neighborCells->clear();
 	int rowLess, rowMore, colLess, colMore;
@@ -112,13 +112,13 @@ void Movement::GetNeighborCells(Cell* parent, vector<Cell>* neighborCells, vecto
 	AddNodeToNeighborCells(rowMore, parent->col, neighborCells, water);
 }
 
-void Movement::AddNodeToNeighborCells(int row, int col,vector<Cell>* neighborCells, vector<Location>* water)
+void M::AddNodeToNeighborCells(int row, int col,vector<Cell>* neighborCells, vector<Location>* water)
 {
 	if (find_if(water->begin(), water->end(), [row, col](Location x){ return x.row == row && x.col == col; }) == water->end())
 		neighborCells->push_back(Cell(row, col));
 }
 
-bool Movement::SearchPathIsComplete(Cell *x, Ant* ant)
+bool M::SearchPathIsComplete(Cell *x, Ant* ant)
 {
 	if (ant->target == EXPLORE && 
 		x->row <= ant->destination.row + TARGET_RADIUS &&
@@ -132,7 +132,7 @@ bool Movement::SearchPathIsComplete(Cell *x, Ant* ant)
 	return false;
 }
 
-bool Movement::SearchAntIsComplete(int tRow, int tCol, Cell *x, Bot* bot)
+bool M::SearchAntIsComplete(int tRow, int tCol, Cell *x, Bot* bot)
 {
 	vector<Ant>::iterator antIt;
 	if((antIt = find_if(bot->myAnts->begin(), bot->myAnts->end(), 
@@ -153,8 +153,8 @@ bool Movement::SearchAntIsComplete(int tRow, int tCol, Cell *x, Bot* bot)
 	return false;
 }
 
-//char Movement::SearchAntForTarget(int maxR, int maxC, int targetRow, int targetCol, Bot* bot, Target target)
-char Movement::SearchAntForTarget(int targetRow, int targetCol, Bot* bot, Target target)
+//char M::SearchAntForTarget(int maxR, int maxC, int targetRow, int targetCol, Bot* bot, Target target)
+char M::SearchAntForTarget(int targetRow, int targetCol, Bot* bot, Target target)
 {
 	//maxRows = maxR;
 	//maxCols = maxC;
@@ -234,8 +234,8 @@ char Movement::SearchAntForTarget(int targetRow, int targetCol, Bot* bot, Target
 	return 0;
 }
 
-//char Movement::GetDirection(int row1, int col1, int row2, int col2, int maxRows, int maxCols)
-char Movement::GetDirection(int row1, int col1, int row2, int col2)
+//char M::GetDirection(int row1, int col1, int row2, int col2, int maxRows, int maxCols)
+char M::GetDirection(int row1, int col1, int row2, int col2)
 {
 	if(row1 == row2 && col2 == col1) return 'W';
 	if(row1 == maxRows - 1 && row2 == 0) return 'N';
@@ -249,12 +249,40 @@ char Movement::GetDirection(int row1, int col1, int row2, int col2)
 	if(row1 > row2) return 'S';
 }
 
-Movement::Movement(void)
+Location M::GetCoordOfDirection(char direction, int row, int col)
+{
+	switch(direction)
+	{
+	case 'N':
+		row == 0 ? row = maxRows - 1 : row = row - 1;
+		break;
+	case 'W':
+		col == 0 ? col = maxCols - 1 : col = col - 1;
+		break;
+	case 'S':
+		row == maxRows - 1 ? row = 0 : row = row + 1;
+		break;
+	case 'E':
+		col == maxCols - 1 ? col = 0 : col = col + 1;
+		break;
+	}
+	return Location(row, col);
+}
+
+bool M::CanMove(char direction, int row, int col, Bot* bot)
+{
+	Location loc = M::GetCoordOfDirection(direction, row, col);
+	return
+		find_if(bot->water->begin(), bot->water->end(), [&](Location _loc){ return _loc.row == loc.row && _loc.col == loc.col; }) == bot->water->end() &&
+		find_if(bot->myAnts->begin(), bot->myAnts->end(), [&](Ant _ant){ return _ant.location.row == loc.row && _ant.location.col == loc.col; }) == bot->myAnts->end();
+}
+
+M::M(void)
 {
 	//maxCols = maxRows = 0;
 }
 
 
-Movement::~Movement(void)
+M::~M(void)
 {
 }

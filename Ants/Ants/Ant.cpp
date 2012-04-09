@@ -12,8 +12,11 @@ Ant::Ant(void)
 
 Ant::Ant(int row, int col)
 {
+	destination.row = -1;
+	destination.col = -1;
 	location.row = row;
 	location.col = col;
+	turn = 0;
 	distToTarget = 40000;
 	//path = new vector<Location>();
 	target = NOTHING;

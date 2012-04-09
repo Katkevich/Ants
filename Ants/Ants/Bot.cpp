@@ -35,9 +35,9 @@ void Bot::Run()
 	ifstream in("input.txt");
 	//in.open("input.txt");
 	ParseInitialInput(cin);
-	//Movement::init(rows, cols);
-	Movement::maxRows = rows;
-	Movement::maxCols = cols;	
+	//M::init(rows, cols);
+	M::maxRows = rows;
+	M::maxCols = cols;	
 
 	for(int i = RES_SQUARE; i < rows; i += 2 * RES_SQUARE)
 		for(int j = RES_SQUARE; j < cols; j += 2 * RES_SQUARE)
@@ -48,6 +48,8 @@ void Bot::Run()
 	//str.open("output.txt", ios::out);
 	fstream stream;
 	stream.open("output.txt", ios::out|ios::trunc);	
+	vector<Location> *nextTurnAnts = new vector<Location>();
+	vector<Ant*> *immobilAnts = new vector<Ant*>();
 	do
 	{	
 		long c;
@@ -57,13 +59,29 @@ void Bot::Run()
 
 		for_each(rschSpaces->begin(), rschSpaces->end(), [&](SpaceForResearch &space){
 			if(find_if(myAnts->begin(), myAnts->end(), [&](Ant _ant){ 
-				return Movement::GetDirectDistance(space.row, space.col, _ant.location.row, _ant.location.col) < viewradius;
+				return M::GetDirectDistance(space.row, space.col, _ant.location.row, _ant.location.col) < viewradius;
 			}) != myAnts->end())
 				space.latestRsch = 0;
 		});
 
-		AllocTargetsForAnts();
-		MakeMoves();
+		AllocTargetsForAnts();		
+		if(turn == 296)
+		{
+			int u = 0;
+			cout << c;
+			u++;
+		}
+		if(turn == 50)
+		{
+			int uy = 0;
+			uy++;
+		}
+		MakeMoves(FOOD, nextTurnAnts, immobilAnts);
+		MakeMoves(EXPLORE, nextTurnAnts, immobilAnts);
+		TryMakeMoves(immobilAnts);
+		nextTurnAnts->clear();
+		immobilAnts->clear();
+		cout << "go\n";
 
 		for_each(rschSpaces->begin(), rschSpaces->end(), [](SpaceForResearch &space){
 			space.latestRsch++;
@@ -75,7 +93,7 @@ void Bot::Run()
 		});*/
 		c = clock() - c;
 		cout << turn << " " << (double)c/CLOCKS_PER_SEC << endl;
-	//	char next = Movement::SearchPathForAnt(/*rows, cols, */&((*myAnts)[0]), this);
+	//	char next = M::SearchPathForAnt(/*rows, cols, */&((*myAnts)[0]), this);
 
 		//char next = (*myAnts)[0].MakeMove(rows, cols, water);		
 
@@ -90,6 +108,8 @@ void Bot::Run()
 		//cout << "o 32 " << i << " W\ngo\n";
 //		/i++;
 	} while(exit);
+	delete nextTurnAnts;
+	delete immobilAnts;
 	in.close();
 	stream.close();
 }
@@ -99,12 +119,13 @@ void Bot::AllocTargetsForAnts()
 	TargetIsReached();
 	for(auto it = food->begin(); it != food->end(); it++)
 	{
-		Movement::SearchAntForTarget(it->row, it->col, this, FOOD);
+		//if()
+		M::SearchAntForTarget(it->row, it->col, this, FOOD);
 	}
 	for(auto it = myAnts->begin(); it != myAnts->end(); it++)
 	{
 		/*if(it->target == EXPLORE && 
-			Movement::GetDirectDistance(it->location.row, it->location.col, it->destination.row, it->destination.col) <= TARGET_RADIUS)
+			M::GetDirectDistance(it->location.row, it->location.col, it->destination.row, it->destination.col) <= TARGET_RADIUS)
 			it->onTheWay = false;*/
 		//if(it->target == EXPLORE)
 		if(it->target == NOTHING)
@@ -116,7 +137,7 @@ void Bot::AllocTargetsForAnts()
 			int rowMid = 0, colMid = 0;
 			float dist;
 			/*for_each(rschSpaces->begin(), rschSpaces->end(), [&](SpaceForResearch &space){
-				dist = Movement::GetDirectDistance(space.row, space.col, it->location.row, it->location.col);
+				dist = M::GetDirectDistance(space.row, space.col, it->location.row, it->location.col);
 				if(dist < EXPLORE_RADIUS)
 				{
 
@@ -125,20 +146,28 @@ void Bot::AllocTargetsForAnts()
 			vector<SpaceForResearch>::iterator bestAltr;
 			for(auto space = rschSpaces->begin(); space != rschSpaces->end(); space++)
 			{
-				dist = Movement::GetDirectDistance(space->row, space->col, it->location.row, it->location.col);
+				dist = M::GetDirectDistance(space->row, space->col, it->location.row, it->location.col);
 				if(dist < EXPLORE_RADIUS)
 				{
 					if(!bestAltr._Ptr || space->latestRsch > bestAltr->latestRsch || 
 						(space->latestRsch == bestAltr->latestRsch && dist < bestAltr->dist))
 					{
-						bestAltr = space;
-						bestAltr->dist = dist;
+						if(count_if(myAnts->begin(), myAnts->end(), 
+							[&](Ant &_ant){ return _ant.destination.row == space->row && _ant.destination.col == space->col; }) < SAME_TARGET_ANTS)
+						{
+							space->antsNumb++;
+							bestAltr = space;
+							bestAltr->dist = dist;
+						}
 						//continue;
 					}
 				}
 			}
-			it->destination.row = bestAltr->row;
-			it->destination.col = bestAltr->col;
+			if(bestAltr._Ptr)
+			{
+				it->destination.row = bestAltr->row;
+				it->destination.col = bestAltr->col;
+			}
 			//for(Ant &ant : myAnts) 
 			/*for_each(myAnts->begin(), myAnts->end(), [&rowMid, &colMid](Ant &_ant)
 			{ 
@@ -148,7 +177,7 @@ void Bot::AllocTargetsForAnts()
 			rowMid /= myAnts->size();
 			colMid /= myAnts->size();
 			int tempX, tempY;
-			float d = Movement::GetDirectDistance(rowMid, colMid, it->location.row, it->location.col);
+			float d = M::GetDirectDistance(rowMid, colMid, it->location.row, it->location.col);
 			tempX = (DIST_TO_TARGET / d)*(it->location.row - rowMid) + it->location.row;
 			tempY = (DIST_TO_TARGET / d)*(it->location.col - colMid) + it->location.col;
 			if(tempX < 0) tempX += rows;
@@ -158,19 +187,15 @@ void Bot::AllocTargetsForAnts()
 			it->destination.row = tempX;
 			it->destination.col = tempY;*/
 			int u;
-			/*{
-				colMid += ant.location.col;
-				rowMid += ant.location.row;
-			}*/
 			//!!!!!!!			
 			srand(time(0));
 	/*		int temp = rand() % (rschSpaces->size() - 1);
 			SpaceForResearch* bestAlt = &((*rschSpaces)[temp]);
-			int minDist = Movement::GetDirectDistance((*rschSpaces)[temp].row, (*rschSpaces)[temp].col, it->location.row, it->location.col);
+			int minDist = M::GetDirectDistance((*rschSpaces)[temp].row, (*rschSpaces)[temp].col, it->location.row, it->location.col);
 			for_each(rschSpaces->begin(), rschSpaces->end(), [&](SpaceForResearch &space){
 				if(space.latestRsch + space.antsNumb < bestAlt->latestRsch + bestAlt->antsNumb || 
 					(space.latestRsch + space.antsNumb == bestAlt->latestRsch + bestAlt->antsNumb &&
-					(temp = Movement::GetDirectDistance(space.row, space.col, it->location.row, it->location.col)) < minDist))
+					(temp = M::GetDirectDistance(space.row, space.col, it->location.row, it->location.col)) < minDist))
 				{
 					bestAlt = &space;
 					minDist = temp;					
@@ -181,14 +206,10 @@ void Bot::AllocTargetsForAnts()
 			//!!!!!!!
 			it->onTheWay == true;
 			//int rowMid = accumulate(myAnts->begin(), myAnts->end(), 0, function(Ant a1, Ant a2){});
-		//	it->destination.row = 37;
-		//	it->destination.col = 50;
-			Movement::SearchPathForAnt(it._Ptr, this);
-	//		}
-			
+			M::SearchPathForAnt(it._Ptr, this);
 		}
 		else if(it->target == EXPLORE)
-			Movement::SearchPathForAnt(it._Ptr, this);
+			M::SearchPathForAnt(it._Ptr, this);
 	}
 }
 
@@ -196,33 +217,216 @@ void Bot::TargetIsReached()
 {
 	int dist;
 	for_each(myAnts->begin(), myAnts->end(), [&](Ant &ant){
-		dist = Movement::GetDirectDistance(ant.location.row, ant.location.col, ant.destination.row, ant.destination.col);
+		dist = M::GetDirectDistance(ant.location.row, ant.location.col, ant.destination.row, ant.destination.col);
 		if(ant.target == FOOD/* && dist <= 1*/)
 		{
 			ant.target = NOTHING;
 			ant.distToTarget = 40000;
 			ant.onTheWay = false;
+			ant.destination.row = -1;
+			ant.destination.col = -1;
 		}
-		else if(ant.target == EXPLORE && dist <= TARGET_RADIUS)
+		else if((ant.target == EXPLORE && dist <= TARGET_RADIUS) || ant.turn == TURNS_BEFORE_DISTRIB)
 		{
+			ant.turn = 0;
 			ant.target = NOTHING;
 			ant.distToTarget = 40000;
 			ant.onTheWay = false;
+			ant.destination.row = -1;
+			ant.destination.col = -1;
 		}
 	});
 }
 
-void Bot::MakeMoves()
+void Bot::MakeMoves(Target t, vector<Location>* nextTurnAnts, vector<Ant*> *immobilAnts)
 {
-	for(auto it = myAnts->begin(); it != myAnts->end(); it++)
+	//for_each(myAnts->begin(), myAnts->end(), [&](Ant &_ant)
+	//{
+	//	if(_ant.target == t)
+	//	{
+	//		Location loc = M::GetCoordOfDirection(_ant.direction, _ant.location.row, _ant.location.col);
+	//		if(find_if(nextTurnAnts->begin(), nextTurnAnts->end(), [&](Location _loc){ return _loc.row == loc.row && _loc.col == loc.col; }) == nextTurnAnts->end() &&
+	//			find_if(myAnts->begin(), myAnts->end(), [&](Ant _ant){ return _ant.location.row == loc.row && _ant.location.col == loc.col; }) == myAnts->end())
+	//		{
+	//			nextTurnAnts->push_back(loc);
+	//			cout << "o " << _ant.location.row << " " << _ant.location.col << " " << _ant.direction << endl;
+	//			_ant.ChangeLocation(_ant.direction, rows, cols);
+	//			_ant.turn++;
+	//		}
+	//		else
+	//		{
+	//			nextTurnAnts->push_back(_ant.location);
+	//			immobilAnts->push_back(&_ant);
+	//		}
+	//	}
+	//});
+
+	for(auto ant = myAnts->begin(); ant != myAnts->end(); ant++)
 	{
-		//if(it->target == FOOD)
-		cout << "o " << it->location.row << " " << it->location.col << " " << it->direction << endl;
-		//else
-		//	cout << "o " << it->location.row << " " << it->location.col << " " << it->direction << "++++++++++\n";
-		it->ChangeLocation(it->direction, rows, cols);
+		if(ant->target == t)
+		{
+			Location loc = M::GetCoordOfDirection(ant->direction, ant->location.row, ant->location.col);
+			if(find_if(nextTurnAnts->begin(), nextTurnAnts->end(), [&](Location _loc){ return _loc.row == loc.row && _loc.col == loc.col; }) == nextTurnAnts->end() &&
+				find_if(myAnts->begin(), myAnts->end(), [&](Ant _ant){ return _ant.location.row == loc.row && _ant.location.col == loc.col; }) == myAnts->end())
+			{
+				nextTurnAnts->push_back(loc);
+				cout << "o " << ant->location.row << " " << ant->location.col << " " << ant->direction << endl;
+				ant->ChangeLocation(ant->direction, rows, cols);
+				ant->turn++;
+			}
+			else
+			{
+				nextTurnAnts->push_back(ant->location);
+				immobilAnts->push_back(ant._Ptr);
+			}
+		}
 	}
-	cout << "go\n";
+
+	//for_each(myAnts->begin(), myAnts->end(), [&](Ant &_ant)
+	//{
+	//	if(_ant.target == EXPLORE)
+	//	{
+	//		Location loc = M::GetCoordOfDirection(_ant.direction, _ant.location.row, _ant.location.col);
+	//		if(find_if(turnsVector.begin(), turnsVector.end(), [&](Location _loc){ return  _loc.row == loc.row && _loc.col == loc.col; }) == turnsVector.end())
+	//		{
+	//			turnsVector.push_back(loc);
+	//			cout << "o " << _ant.location.row << " " << _ant.location.col << " " << _ant.direction << endl;
+	//			_ant.ChangeLocation(_ant.direction, rows, cols);
+	//			_ant.turn++;
+	//		}
+	//	}
+	//});
+
+	//for(auto it = myAnts->begin(); it != myAnts->end(); it++)
+	//{
+	//	//if(it->target == FOOD)
+	//	cout << "o " << it->location.row << " " << it->location.col << " " << it->direction << endl;
+	//	//else
+	//	//	cout << "o " << it->location.row << " " << it->location.col << " " << it->direction << "++++++++++\n";
+	//	it->ChangeLocation(it->direction, rows, cols);
+	//	it->turn++;
+	//}
+//	cout << "go\n";
+}
+
+void Bot::TryMakeMoves(vector<Ant*> *immobilAnts)
+{
+	for(auto it = immobilAnts->begin(); it != immobilAnts->end(); it++)
+	{
+		int n = 0, rowTemp, colTemp, temp, dist;
+		float rowMid = 0, colMid = 0;
+		char dir[2];
+		/*for_each(immobilAnts->begin(), immobilAnts->end(), [&](Ant *_ant)
+		{			
+			if(dist = M::GetDirectDistance((**it).location.row, (**it).location.col, _ant->location.row, _ant->location.col) <= RADIUS)
+			{
+				temp = (**it).location.row - _ant->location.row;
+				if(temp < (-1)*RADIUS)
+					rowMid += (-1)*(temp + rows + 1);
+				else if(temp >= (-1)*RADIUS && temp <= RADIUS)
+					rowMid += (-1)*temp;				
+				else
+					rowMid += (-1)*(temp - rows - 1);
+
+				temp = (**it).location.col - _ant->location.col;
+				if(temp < (-1)*RADIUS)
+					colMid += (-1)*(temp + cols + 1);
+				else if(temp >= (-1)*RADIUS && temp <= RADIUS)
+					colMid += (-1)*temp;				
+				else
+					colMid += (-1)*(temp - cols - 1);
+				n++;
+			}
+		});*/
+		for(auto _ant = immobilAnts->begin(); _ant != immobilAnts->end(); _ant++)
+		{			
+			if(dist = M::GetDirectDistance((**it).location.row, (**it).location.col, (**_ant).location.row, (**_ant).location.col) <= RADIUS)
+			{
+				temp = (**it).location.row - (**_ant).location.row;
+				if(temp < (-1)*RADIUS)
+					rowMid += (-1)*(temp + rows + 1);
+				else if(temp >= (-1)*RADIUS && temp <= RADIUS)
+					rowMid += (-1)*temp;				
+				else
+					rowMid += (-1)*(temp - rows - 1);
+
+				temp = (**it).location.col - (**_ant).location.col;
+				if(temp < (-1)*RADIUS)
+					colMid += (-1)*(temp + cols + 1);
+				else if(temp >= (-1)*RADIUS && temp <= RADIUS)
+					colMid += (-1)*temp;				
+				else
+					colMid += (-1)*(temp - cols - 1);
+				n++;
+			}
+		}
+		rowMid /= (float)n;
+		colMid /= (float)n;
+		if(abs(rowMid) > abs(colMid))
+		{
+			if(rowMid > 0) dir[0] = 'N';
+			else if(rowMid < 0) dir[0] = 'S';
+			else dir[0] = 'R';
+		}
+		else
+		{
+			if(colMid > 0) dir[1] = 'W';
+			else if(colMid < 0) dir[1] = 'E';
+			else dir[1] = 'R';
+		}
+		for(int i = 0; i < 2; i++)
+		{
+			bool isW = true, isE = true, isN = true, isS = true;
+			if(dir[i] != 'R')
+			{
+				Location loc = M::GetCoordOfDirection(dir[i], (**it).location.row, (**it).location.col);
+				if(find_if(water->begin(), water->end(), [&](Location _loc){ return _loc.row == loc.row && _loc.col == loc.col; }) == water->end() &&
+					find_if(myAnts->begin(), myAnts->end(), [&](Ant _ant){ return _ant.location.row == loc.row && _ant.location.col == loc.col; }) == myAnts->end())
+				{
+					cout << "o " << (**it).location.row << " " << (**it).location.col << " " << dir[i] << endl;
+					(**it).ChangeLocation(dir[i], rows, cols);
+					(**it).turn++;
+					/*(**it).target = NOTHING;
+					(**it).distToTarget = 40000;
+					(**it).onTheWay = false;
+					(**it).destination.row = -1;
+					(**it).destination.col = -1;*/
+					break;
+				}
+			}
+			//else if(i == 0)
+			//{
+			//	while(isN || isE || isW || isS)
+			//	{
+			//		srand(time(0));
+			//		int id = rand() % 4;
+			//		switch(id)
+			//		{
+			//		case 0:
+			//			isN = false;
+			//			break;
+			//		case 1:
+			//			isE = false;
+			//			break;
+			//		case 2:
+			//			isW = false;
+			//			break;
+			//		case 3:
+			//			isS = false;
+			//			break;
+			//		}
+			//		if(id == 0 && isN && M::CanMove(DIRECTION[id], (**it).location.row, (**it).location.col, this))
+			//		{
+			//			cout << "o " << (**it).location.row << " " << (**it).location.col << " " << 'N' << endl;
+			//			(**it).ChangeLocation(dir[i], rows, cols);
+			//			(**it).turn++;
+			//			//goto exit;
+			//		}
+			//	}
+			//}
+		}
+		//exit:;
+	}
 }
 
 void Bot::EndMove()

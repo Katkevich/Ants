@@ -10,7 +10,7 @@
 #include <iostream>
 using namespace std;
 
-static class Movement
+static class M
 {
 public:
 	static int maxRows, maxCols;	
@@ -28,8 +28,10 @@ public:
 	static bool SearchAntIsComplete(int tRow, int tCol, Cell *x, Bot* bot);
 	// Wave
 	static char GetDirection(int row1, int col1, int row2, int col2);
+	static Location GetCoordOfDirection(char direction, int row, int col);
 
-	Movement(void);
-	~Movement(void);
+	static bool CanMove(char direction, int row, int col, Bot* bot);
+	M(void);
+	~M(void);
 };
 

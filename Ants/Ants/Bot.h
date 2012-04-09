@@ -58,7 +58,9 @@ public:
 
 	void TargetIsReached();
 
-	void MakeMoves();
+	void MakeMoves(Target t, vector<Location>* turnsVector, vector<Ant*>* immobilAnts);
+	// To try to make a move the immobilised ant
+	void TryMakeMoves(vector<Ant*> *immobilAnts);
 	void EndMove();
 	bool Parse();
 	
