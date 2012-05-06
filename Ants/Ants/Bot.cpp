@@ -27,15 +27,9 @@ Bot::~Bot()
 void Bot::Run()
 {
 	bool exit;	
-	//ParseInitialInput();
-	//cout << "go" << endl;
-	//int i = 0, j = 2, r = 1, c = 999999999;
 	int row, col, player;
-	//Parse();
 	ifstream in("input.txt");
-	//in.open("input.txt");
 	ParseInitialInput(cin);
-	//M::init(rows, cols);
 	M::maxRows = rows;
 	M::maxCols = cols;	
 
@@ -44,17 +38,13 @@ void Bot::Run()
 			rschSpaces->push_back(SpaceForResearch(i, j, 1));
 
 	cout << "go" << endl;
-	//fstream str;
-	//str.open("output.txt", ios::out);
-	fstream stream;
-	stream.open("output.txt", ios::out|ios::trunc);	
 	vector<Location> *nextTurnAnts = new vector<Location>();
 	vector<Ant*> *immobilAnts = new vector<Ant*>();
 	do
 	{	
 		long c;
 		c = clock();
-		
+
 		exit = ParseInput(cin);
 
 		for_each(rschSpaces->begin(), rschSpaces->end(), [&](SpaceForResearch &space){
@@ -62,23 +52,26 @@ void Bot::Run()
 				return M::GetDirectDistance(space.row, space.col, _ant.location.row, _ant.location.col) < viewradius;
 			}) != myAnts->end())
 				space.latestRsch = 0;
-		});
+		});		
 
-		AllocTargetsForAnts();		
-		if(turn == 296)
-		{
-			int u = 0;
-			cout << c;
-			u++;
-		}
-		if(turn == 50)
+		if(turn == 44)
 		{
 			int uy = 0;
 			uy++;
 		}
+		AllocTargetsForAnts();		
+		
+		MakeMoves(ENEMY_HILL, nextTurnAnts, immobilAnts);
 		MakeMoves(FOOD, nextTurnAnts, immobilAnts);
 		MakeMoves(EXPLORE, nextTurnAnts, immobilAnts);
 		TryMakeMoves(immobilAnts);
+		
+		enemyHills->erase(remove_if(enemyHills->begin(), enemyHills->end(), [&](Location hill){
+			return(find_if(myAnts->begin(), myAnts->end(), [&](Ant ant){
+				return ant.location.row == hill.row && ant.location.col == hill.col;
+			}) != myAnts->end());
+		}), enemyHills->end());
+
 		nextTurnAnts->clear();
 		immobilAnts->clear();
 		cout << "go\n";
@@ -86,11 +79,6 @@ void Bot::Run()
 		for_each(rschSpaces->begin(), rschSpaces->end(), [](SpaceForResearch &space){
 			space.latestRsch++;
 		});
-
-		/*for_each(myAnts->begin(), myAnts->end(), [](Ant &ant){
-			ant.distToTarget = 40000;
-			ant.target = EXPLORE;
-		});*/
 		c = clock() - c;
 		cout << turn << " " << (double)c/CLOCKS_PER_SEC << endl;
 	//	char next = M::SearchPathForAnt(/*rows, cols, */&((*myAnts)[0]), this);
@@ -111,15 +99,26 @@ void Bot::Run()
 	delete nextTurnAnts;
 	delete immobilAnts;
 	in.close();
-	stream.close();
 }
 
 void Bot::AllocTargetsForAnts()
 {	
 	TargetIsReached();
-	for(auto it = food->begin(); it != food->end(); it++)
+	for(auto it = enemyHills->begin(); it != enemyHills->end(); it++)
 	{
-		//if()
+		for(auto ant = myAnts->begin(); ant != myAnts->end(); ant++)
+		{
+			if(M::GetDistance(it->row, it->col, ant->location.row, ant->location.col) <= ENEMY_HILL_DISTANCE)
+			{				
+				ant->target = ENEMY_HILL;
+				ant->destination.row = it->row;
+				ant->destination.col = it->col;
+				ant->direction = M::SearchPathForAnt(ant._Ptr, this);				
+			}
+		}
+	}
+	for(auto it = food->begin(); it != food->end(); it++)
+	{		
 		M::SearchAntForTarget(it->row, it->col, this, FOOD);
 	}
 	for(auto it = myAnts->begin(); it != myAnts->end(); it++)
@@ -218,7 +217,7 @@ void Bot::TargetIsReached()
 	int dist;
 	for_each(myAnts->begin(), myAnts->end(), [&](Ant &ant){
 		dist = M::GetDirectDistance(ant.location.row, ant.location.col, ant.destination.row, ant.destination.col);
-		if(ant.target == FOOD/* && dist <= 1*/)
+		if(ant.target == FOOD || ant.target == ENEMY_HILL)
 		{
 			ant.target = NOTHING;
 			ant.distToTarget = 40000;
@@ -266,8 +265,10 @@ void Bot::MakeMoves(Target t, vector<Location>* nextTurnAnts, vector<Ant*> *immo
 		if(ant->target == t)
 		{
 			Location loc = M::GetCoordOfDirection(ant->direction, ant->location.row, ant->location.col);
-			if(find_if(nextTurnAnts->begin(), nextTurnAnts->end(), [&](Location _loc){ return _loc.row == loc.row && _loc.col == loc.col; }) == nextTurnAnts->end() &&
-				find_if(myAnts->begin(), myAnts->end(), [&](Ant _ant){ return _ant.location.row == loc.row && _ant.location.col == loc.col; }) == myAnts->end())
+			if(find_if(nextTurnAnts->begin(), nextTurnAnts->end(), [&](Location _loc)
+				{ return _loc.row == loc.row && _loc.col == loc.col; }) == nextTurnAnts->end() &&
+				find_if(myAnts->begin(), myAnts->end(), [&](Ant _ant)
+				{ return _ant.location.row == loc.row && _ant.location.col == loc.col; }) == myAnts->end())
 			{
 				nextTurnAnts->push_back(loc);
 				cout << "o " << ant->location.row << " " << ant->location.col << " " << ant->direction << endl;
@@ -440,7 +441,7 @@ bool Bot::ParseInput(istream& in)
 	enemyAnts->clear();	
 //	myAnts->clear();
 	myHills->clear();
-	enemyHills->clear();
+//	enemyHills->clear();
 	food->clear();
 	int row, col, player;
 	string command, junk;
@@ -479,7 +480,14 @@ bool Bot::ParseInput(istream& in)
 			if(player == 0)
 				myHills->push_back(Location(row, col));
 			else
-				enemyHills->push_back(Location(row, col));
+			{
+				if(find_if(enemyHills->begin(), enemyHills->end(), [&](Location hill){
+					return (hill.row == row && hill.col == col);
+				}) == enemyHills->end())
+				{
+					enemyHills->push_back(Location(row, col));
+				}
+			}
 		}
 		else if(command == "go")
 		{

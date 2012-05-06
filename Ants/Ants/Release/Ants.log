@@ -1,31 +1,18 @@
-﻿  Ant.cpp
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\Ant.h(37): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-  Ants.cpp
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\Ant.h(37): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-  Bot.cpp
+﻿  Bot.cpp
 c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\Ant.h(37): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
 c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\Movement.h(36): warning C4091: 'static ' : ignored on left of 'M' when no variable is declared
 Bot.cpp(33): warning C4101: 'col' : unreferenced local variable
 Bot.cpp(33): warning C4101: 'player' : unreferenced local variable
 Bot.cpp(33): warning C4101: 'row' : unreferenced local variable
-Bot.cpp(191): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
-Bot.cpp(207): warning C4553: '==' : operator has no effect; did you intend '='?
-Bot.cpp(189): warning C4101: 'u' : unreferenced local variable
-Bot.cpp(220): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-Bot.cpp(220): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-Bot.cpp(316): warning C4101: 'colTemp' : unreferenced local variable
-Bot.cpp(316): warning C4101: 'rowTemp' : unreferenced local variable
-  Movement.cpp
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\Ant.h(37): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\Movement.h(36): warning C4091: 'static ' : ignored on left of 'M' when no variable is declared
-Movement.cpp(27): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-Movement.cpp(71): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-Movement.cpp(87): warning C4244: 'initializing' : conversion from 'const int' to 'float', possible loss of data
-Movement.cpp(88): warning C4244: 'initializing' : conversion from 'const int' to 'float', possible loss of data
-Movement.cpp(174): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-Movement.cpp(210): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+Bot.cpp(216): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+Bot.cpp(232): warning C4553: '==' : operator has no effect; did you intend '='?
+Bot.cpp(214): warning C4101: 'u' : unreferenced local variable
+Bot.cpp(245): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+Bot.cpp(245): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+Bot.cpp(341): warning C4101: 'colTemp' : unreferenced local variable
+Bot.cpp(341): warning C4101: 'rowTemp' : unreferenced local variable
   Generating code
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.cpp(250): warning C4715: 'M::GetDirection' : not all control paths return a value
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.cpp(253): warning C4715: 'M::GetDirection' : not all control paths return a value
 c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.cpp(82): warning C4715: 'M::SearchPathForAnt' : not all control paths return a value
   Finished generating code
-  Ants.vcxproj -> C:\Users\ShturMan\documents\visual studio 2010\Projects\Ants\Ants\Release\Ants.exe
+  Ants.vcxproj -> C:\Users\ShturMan\Documents\Visual Studio 2010\Projects\Ants\Ants\Release\Ants.exe

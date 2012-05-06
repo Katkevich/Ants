@@ -23,3 +23,4 @@ const char DIRECTION[] = {'N', 'E', 'W', 'S'};
 #define SAME_TARGET_ANTS 3
 #define TURNS_IN_EXPLORE 30
 #define RADIUS 4
+#define ENEMY_HILL_DISTANCE 15

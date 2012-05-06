@@ -5,28 +5,8 @@ c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.
 c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.cpp(71): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
 c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.cpp(87): warning C4244: 'initializing' : conversion from 'const int' to 'float', possible loss of data
 c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.cpp(88): warning C4244: 'initializing' : conversion from 'const int' to 'float', possible loss of data
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.cpp(174): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.cpp(210): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-  Bot.cpp
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\ant.h(37): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.h(36): warning C4091: 'static ' : ignored on left of 'M' when no variable is declared
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(33): warning C4101: 'col' : unreferenced local variable
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(33): warning C4101: 'player' : unreferenced local variable
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(33): warning C4101: 'row' : unreferenced local variable
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(186): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(202): warning C4553: '==' : operator has no effect; did you intend '='?
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(184): warning C4101: 'u' : unreferenced local variable
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(215): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(215): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(311): warning C4101: 'colTemp' : unreferenced local variable
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\bot.cpp(311): warning C4101: 'rowTemp' : unreferenced local variable
-  Generating Code...
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.cpp(177): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.cpp(213): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
 c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.cpp(82): warning C4715: 'M::SearchPathForAnt' : not all control paths return a value
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.cpp(250): warning C4715: 'M::GetDirection' : not all control paths return a value
-  Compiling...
-  Ants.cpp
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\ant.h(37): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-  Ant.cpp
-c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\ant.h(37): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-  Generating Code...
-  Ants.vcxproj -> C:\Users\ShturMan\documents\visual studio 2010\Projects\Ants\Ants\Debug\Ants.exe
+c:\users\shturman\documents\visual studio 2010\projects\ants\ants\ants\movement.cpp(253): warning C4715: 'M::GetDirection' : not all control paths return a value
+  Ants.vcxproj -> C:\Users\ShturMan\Documents\Visual Studio 2010\Projects\Ants\Ants\Debug\Ants.exe
