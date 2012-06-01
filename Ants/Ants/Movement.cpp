@@ -5,13 +5,9 @@ int M::maxRows = 0;
 int M::maxCols = 0;
 
 char M::SearchPathForAnt(Ant* ant, Bot* bot)
-{		
-//	ant->path->clear();	
+{			
 	vector<Cell> closedCells, openCells, neighborCells;
-	Cell start;
-	int i = 0;
-	if(ant->location.row == 32 && ant->location.col == 82)
-		i++;
+	Cell start;	
 	start.col = ant->location.col;
 	start.row = ant->location.row;
 	start.gScore = 0;
@@ -25,45 +21,31 @@ char M::SearchPathForAnt(Ant* ant, Bot* bot)
 			if ((*it).fScore <= cellIt->fScore)
 				cellIt = it;
 		Cell *cell = new Cell((*cellIt).row, (*cellIt).col, (*cellIt).gScore,(*cellIt).hScore, 
-							  (*cellIt).fScore, (*cellIt).parent);
-		if (SearchPathIsComplete(cell, ant))
+							  (*cellIt).fScore, (*cellIt).parent);		
+		if (SearchPathIsComplete(cell, ant) || cell->gScore > DIST_TO_TARGET)
 		{
-			Cell *currentCell = cell;
+			Cell *currentCell = cell;	
+			if(cell->gScore > DIST_TO_TARGET)
+			{
+				ant->destination.row = cell->row;
+				ant->destination.col = cell->col;
+			}
 			if(currentCell->parent)
 			while(currentCell->parent->parent != NULL)
 			{
-//				ant->path->push_back(Location(currentCell->row, currentCell->col));
 				currentCell = currentCell->parent;
 			}				
-//			if(ant->path->size() == 1)			
-//				ant->onTheWay = false;
-//			ant->direction = GetDirection(ant->path->back().row, ant->path->back().col, ant->location.row, ant->location.col);
 			ant->direction = GetDirection(currentCell->row, currentCell->col, ant->location.row, ant->location.col);
-			return ant->direction;
-			//if(ant->path->back().row == maxRows - 1 && ant->location.row == 0) return 'N';
-			//if(ant->path->back().col == 0 && ant->location.col == maxCols - 1) return 'E';
-			//if(ant->path->back().col == maxCols - 1 && ant->location.col == 0) return 'W';
-			//if(ant->path->back().row == 0 && ant->location.row == maxRows - 1) return 'S';
-			//
-			//if(ant->path->back().row < ant->location.row) return 'N';
-			//if(ant->location.col < ant->path->back().col) return 'E';
-			//if(ant->location.col > ant->path->back().col) return 'W';
-			//if(ant->path->back().row > ant->location.row) return 'S';			
-			
+			return ant->direction;			
 		}
 		closedCells.push_back(*cell);
 		openCells.erase(cellIt);
-		//GetNeighborCells(cell, maxRows, maxCols, &neighborCells, bot->water);		
 		GetNeighborCells(cell, &neighborCells, bot->water);		
 		for (auto it = neighborCells.begin(); it != neighborCells.end(); it++)
 		{
 			if (find(closedCells.begin(), closedCells.end(), *it) != closedCells.end())
 				continue;
 			int neighborGScore = cell->gScore + GetDistance(cell->row, cell->col, (*it).row, (*it).col);
-			
-			//auto tempIt = find(openCells.begin(), openCells.end(), *it);
-			
-			//if(tempIt == openCells.end())			
 			if(find(openCells.begin(), openCells.end(), *it) == openCells.end())
 			{
 				int gScore = neighborGScore;
@@ -71,19 +53,11 @@ char M::SearchPathForAnt(Ant* ant, Bot* bot)
 					GetDirectDistance((*it).row, (*it).col, ant->destination.row, ant->destination.col);
 				float fScore = neighborGScore + hScore;
 				openCells.push_back(Cell((*it).row, (*it).col, gScore, hScore, fScore, cell));
-			}
-			//else if(neighborGScore < (*it).gScore)
-			//{
-			//	(*tempIt).gScore = neighborGScore;
-			//	float temp = (*tempIt).hScore = GetDirectDistance((*tempIt).row, (*tempIt).col, ant->destination.row, ant->destination.col/*, maxRows, maxCols*/);
-			//	(*tempIt).fScore = neighborGScore + temp;
-			//	(*tempIt).parent = &(*cell);
-			//}			
+			}	
 		}		
 	}
 }
 
-//float M::GetDirectDistance(int row1, int col1, int row2, int col2, int maxRows, int maxCols)
 float M::GetDirectDistance(int row1, int col1, int row2, int col2)
 {	
 	float colDist = min(col2 + (maxCols - col1), min(abs(col1 - col2), col1 + (maxCols - col2)));
@@ -91,7 +65,6 @@ float M::GetDirectDistance(int row1, int col1, int row2, int col2)
 	return sqrt(pow(colDist, 2) + pow(rowDist, 2));		 
 }
 
-//int M::GetDistance(int row1, int col1, int row2, int col2, int maxRows, int maxCols)
 int M::GetDistance(int row1, int col1, int row2, int col2)
 {	
 	return 
@@ -99,7 +72,6 @@ int M::GetDistance(int row1, int col1, int row2, int col2)
 		min(col2 + (maxCols - col1), min(abs(col1 - col2), col1 + (maxCols - col2)));
 }
 
-//void M::GetNeighborCells(Cell* parent, int maxRows, int maxCols, vector<Cell>* neighborCells, vector<Location>* water)
 void M::GetNeighborCells(Cell* parent, vector<Cell>* neighborCells, vector<Location>* water)
 {
 	neighborCells->clear();
@@ -157,7 +129,6 @@ bool M::SearchAntIsComplete(int tRow, int tCol, Cell *x, Bot* bot)
 			antIt->target = FOOD;
 			antIt->destination.row = tRow;
 			antIt->destination.col = tCol;
-			antIt->onTheWay = false;
 			antIt->distToTarget = x->gScore;
 			if (x->parent)
 			{
@@ -170,11 +141,8 @@ bool M::SearchAntIsComplete(int tRow, int tCol, Cell *x, Bot* bot)
 	return false;
 }
 
-//char M::SearchAntForTarget(int maxR, int maxC, int targetRow, int targetCol, Bot* bot, Target target)
-char M::SearchAntForTarget(int targetRow, int targetCol, Bot* bot, Target target)
+void M::SearchAntForTarget(int targetRow, int targetCol, Bot* bot, Target target)
 {
-	//maxRows = maxR;
-	//maxCols = maxC;
 	vector<Cell> closedCells, openCells, neighborCells;
 	Cell start;
 	start.col = targetCol;
@@ -183,77 +151,29 @@ char M::SearchAntForTarget(int targetRow, int targetCol, Bot* bot, Target target
 	openCells.push_back(start);	
 	int steps = 0;
 	auto ito = openCells.begin();
-	int *o = new int();
 	for(int i = 0; ; i++)
 	{
 		if(openCells[i].gScore > MAX_DIST_TO_FOOD)
 			break;
 		Cell *cell = new Cell(openCells[i].row, openCells[i].col, openCells[i].gScore, 0, 0, openCells[i].parent);
-		//Cell *cell = new Cell((*ito).row, (*ito).col, steps, 0, 0, (*ito).parent);
-		(*o)++;
 		if (SearchAntIsComplete(targetRow, targetCol, cell, bot))
-		{
-			/*Cell *currentCell = cell;
-			while(currentCell->parent != NULL)
-			{
-				ant->path->push_back(Location(currentCell->row, currentCell->col));
-				currentCell = currentCell->parent;
-			}				
-			if(ant->path->size() == 1)			
-				ant->onTheWay = false;
-			if(ant->path->back().row == maxRows - 1 && ant->location.row == 0) return 'N';
-			if(ant->path->back().col == 0 && ant->location.col == maxCols - 1) return 'E';
-			if(ant->path->back().col == maxCols - 1 && ant->location.col == 0) return 'W';
-			if(ant->path->back().row == 0 && ant->location.row == maxRows - 1) return 'S';
-
-			if(ant->path->back().row < ant->location.row) return 'N';
-			if(ant->location.col < ant->path->back().col) return 'E';
-			if(ant->location.col > ant->path->back().col) return 'W';
-			if(ant->path->back().row > ant->location.row) return 'S';		*/	
-			return 'W';
-
+		{	
+			return;
 		}
-		//closedCells.push_back(*cell);
-		//openCells.erase(cellIt);
 		GetNeighborCells(cell, &neighborCells, bot->water);		
-		//GetNeighborCells(cell, maxRows, maxCols, &neighborCells, bot->water);		
 		for (auto itn = neighborCells.begin(); itn != neighborCells.end(); itn++)
 		{
 			if (find(openCells.begin(), openCells.end(), *itn) != openCells.end())
 			{
 				continue;
 			}
-			//(*itn).gScore = i;
-			//(*itn).parent = cell;
-			//auto tempIt = find(openCells.begin(), openCells.end(), *it);
 			openCells.push_back(Cell(itn->row, itn->col, cell->gScore + 1, 0, 0, cell));
-
-/*
-			if(tempIt == openCells.end())			
-			{
-				int gScore = neighborGScore;
-				float hScore = (*it).hScore = GetDirectDestination((*it).row, (*it).col, ant->destination.row, ant->destination.col, maxRows, maxCols);
-				float fScore = neighborGScore + hScore;
-				openCells.push_back(Cell((*it).row, (*it).col, gScore, hScore, fScore, cell));
-			}
-			else if(neighborGScore < (*it).gScore)
-			{
-				(*tempIt).gScore = neighborGScore;
-				float temp = (*tempIt).hScore = GetDirectDestination((*tempIt).row, (*tempIt).col, ant->destination.row, ant->destination.col, maxRows, maxCols);
-				(*tempIt).fScore = neighborGScore + temp;
-				(*tempIt).parent = &(*cell);
-			}			*/
 		}	
-		//if (i == openCells.size() - 1)
 			steps++;
-		/*if(ito == openCells.end())
-			break;*/
-		//ito++;
 	}
-	return 0;
+	return;
 }
 
-//char M::GetDirection(int row1, int col1, int row2, int col2, int maxRows, int maxCols)
 char M::GetDirection(int row1, int col1, int row2, int col2)
 {
 	if(row1 == row2 && col2 == col1) return 'W';
@@ -297,14 +217,4 @@ bool M::CanMove(char direction, int row, int col, Bot* bot)
 		find_if(bot->myAnts->begin(), bot->myAnts->end(), 
 			[&](Ant _ant){ return _ant.location.row == loc.row && _ant.location.col == loc.col; }) == 
 			bot->myAnts->end();
-}
-
-M::M(void)
-{
-	//maxCols = maxRows = 0;
-}
-
-
-M::~M(void)
-{
 }
